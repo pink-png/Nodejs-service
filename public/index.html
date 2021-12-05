@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="app">
+
+    </div>
+
+
+    <script>
+
+        let app = document.querySelector('#app')
+        let websocket = null
+        if ('WebSocket' in window) {
+            websocket = new WebSocket('ws://127.0.0.1:8001')
+
+            websocket.onopen = (e) => {
+                console.log('建立连接')
+                websocket.send('Hello Server!')
+            }
+
+            websocket.onclose = (e) => {
+                console.log('连接关闭')
+            }
+            websocket.onmessage = (e) => {
+                console.log('收到消息', e.data)
+
+                app.innerHTML += e.data
+            }
+            websocket.onerror = () => {
+                console.log('wesocket通信发生错误')
+
+            }
+
+            window.onbeforeunload = () => {
+                websocket.onclose()
+            }
+
+        } else {
+            alert('浏览器不支持websocket')
+        }
+    </script>
+</body>
+
+</html>
