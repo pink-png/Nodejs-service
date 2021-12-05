@@ -1,5 +1,5 @@
 # Nodejs-service
-nodejsj集成服务开发笔记
+nodejs集成服务开发笔记
 
 1.报错 Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
 node中express的，res.send() 或res.json()这类客户端返回的方法仅返回一次，如果多次返回就会出现这个错误！
@@ -13,3 +13,7 @@ let insertSql = `INSERT INTO tp_admin (username, password, nickname, email) VALU
 
 4.代码别犯错
 server.post('./wxlogin', WxAPI.wxlogin)    ./   没有点
+
+
+5.jwt授权登录 和 aouth登录 (2021 - 12 - 6) 
+https://www.cnblogs.com/hl1223/p/13024954.html

@@ -2,10 +2,14 @@ const express = require("express");
 const server = express();
 const path = require("path")
 const Buffer = require("buffer")
-const Stream =  require("stream") 
+const Stream = require("stream")
 
 const cors = require("cors");
 const multer = require('multer');
+
+// 导入自定义中间件
+const GSQjwtmiddleware = require('./middleware/AuthJwt')
+// console.log(111,GSQjwtmiddleware)
 
 // controller模块
 const User = require("./controller/user")
@@ -13,9 +17,34 @@ const Upload = require("./controller/upload")
 const Thirdparty = require("./controller/Thirdparty")
 const WxAPI = require("./controller/wx")
 const WebSocket = require("./controller/websocket")
+const Login = require('./controller/login')
+
+
+// 中间件
+server.use(cors());
+server.use(multer().any())
+server.use(express.urlencoded({ extended: false }));
+server.use(express.json());
+server.use(express.static(__dirname));
+server.use(GSQjwtmiddleware)
+
+//和图片相关的是req.file 
+server.use('/public', express.static(path.join(__dirname, './public/images')))
+
+//设置跨域访问
+server.all('*', (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+    res.header("X-Powered-By", ' 3.2.1');
+    res.header("Content-Type", "application/json;charset=utf-8");
+    next();
+});
+
+
 
 // 开启websocket
-WebSocket.webdemo()
+// WebSocket.webdemo()
 
 // process中的事件模块设置
 const stream = require("./core/stream")
@@ -28,25 +57,9 @@ stream.SIGINT()  // 信号(触发某个按键)相关事件
 // const child1 = require("./child_process/child_process_1")
 // child1.child1()
 
-// 中间件
-server.use(cors());
-server.use(multer().any())
-server.use(express.urlencoded({ extended: false }));
-server.use(express.json());
-server.use(express.static(__dirname));
 
-//和图片相关的是req.file 
-server.use('/public', express.static(path.join(__dirname, './public/images')))
 
-//设置跨域访问
-server.all('*', (req, res, next)=>{
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-    res.header("X-Powered-By", ' 3.2.1');
-    res.header("Content-Type", "application/json;charset=utf-8");
-    next();
-});
+
 
 // 本地自测API 
 server.get('/', User.selecttpadmim)
@@ -59,8 +72,10 @@ server.post('/uploadimg', multer().single('img'), Upload.uploadimg)
 server.post('/wxlogin', WxAPI.wxlogin)
 
 // 第三方API
-server.post("/Sendmailbox",Thirdparty.Sendmailbox)
+server.post("/Sendmailbox", Thirdparty.Sendmailbox)
 
+// jwt登录
+server.post('/jwtlogin', Login.jwtlogin)
 
 
 server.listen(8080, () => {

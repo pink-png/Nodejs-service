@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "child_process": "^1.0.2",
+    "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.3",
     "nodejs-websocket": "^1.7.2",
     "request": "^2.88.2"
