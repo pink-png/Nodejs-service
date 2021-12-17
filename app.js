@@ -3,6 +3,7 @@ const server = express();
 const path = require("path")
 const Buffer = require("buffer")
 const Stream = require("stream")
+const fs = require('fs')
 
 const cors = require("cors");
 const multer = require('multer');
@@ -26,7 +27,7 @@ server.use(multer().any())
 server.use(express.urlencoded({ extended: false }));
 server.use(express.json());
 server.use(express.static(__dirname));
-server.use(GSQjwtmiddleware)
+// server.use(GSQjwtmiddleware)
 
 //和图片相关的是req.file 
 server.use('/public', express.static(path.join(__dirname, './public/images')))
@@ -56,10 +57,6 @@ stream.SIGINT()  // 信号(触发某个按键)相关事件
 // 子线程
 // const child1 = require("./child_process/child_process_1")
 // child1.child1()
-
-
-
-
 
 // 本地自测API 
 server.get('/', User.selecttpadmim)
