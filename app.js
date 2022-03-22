@@ -1,39 +1,29 @@
 const express = require("express");
-const server = express();
+const app = express();
 const path = require("path")
-const Buffer = require("buffer")
-const Stream = require("stream")
-const fs = require('fs')
-
+const fs = require("fs")
 const cors = require("cors");
-const multer = require('multer');
+const { json } = require("express");
+const helmet = require('helmet')
 
 // 导入自定义中间件
 const GSQjwtmiddleware = require('./middleware/AuthJwt')
-// console.log(111,GSQjwtmiddleware)
 
-// controller模块
-const User = require("./controller/user")
-const Upload = require("./controller/upload")
-const Thirdparty = require("./controller/Thirdparty")
-const WxAPI = require("./controller/wx")
-const WebSocket = require("./controller/websocket")
-const Login = require('./controller/login')
-
-
-// 中间件
-server.use(cors());
-server.use(multer().any())
-server.use(express.urlencoded({ extended: false }));
-server.use(express.json());
-server.use(express.static(__dirname));
-// server.use(GSQjwtmiddleware)
-
-//和图片相关的是req.file 
-server.use('/public', express.static(path.join(__dirname, './public/images')))
+// Helmet是一个能够帮助增强Node.JS之Express/Connect等Javascript Web应用安全的中间件。 [https://zhuanlan.zhihu.com/p/136866630]
+app.use(helmet())
+app.use(cors());
+// 解析表单请求体 application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: false }));
+// 解析表单请求体 application/json
+app.use(express.json());
+// 开放资源目录
+app.use(express.static(__dirname));
+// 用于请求开放目录下的image
+app.use('/public', express.static(path.join(__dirname, './public/images')))
+// app.use(GSQjwtmiddleware)
 
 //设置跨域访问
-server.all('*', (req, res, next) => {
+app.all('*', (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
@@ -42,47 +32,35 @@ server.all('*', (req, res, next) => {
     next();
 });
 
+//添加两个路由到应用上
+app.use('/users', require('./routes/users'));
+app.use('/order', require('./routes/order'));
 
+// 通常会在所有的路由之后配置 404 的处理
+app.use((req, res, next) => {  
+    res.status(404).send('404 Not Found.')
+})
 
-// 开启websocket
-// WebSocket.webdemo()
+// 在所有中间件之后挂载错误处理中间件
+app.use((err, req, res, next) => {
+    console.error('222------', err.stack)
+    res.status(500).json({ error: err.message })
+})
 
-// process中的事件模块设置
-const stream = require("./core/stream")
-stream.exit() //监听系统退出
-stream.uncaughtException() // uncaughtException
-stream.SIGINT()  // 信号(触发某个按键)相关事件
+app.get('/json', (req, res) => {
+    fs.readFile('./public/data/list.json', 'utf8', (err, data) => {
+        if (err) {
+            // 失败了直接 return
+            return res.status(500).json({ error: err.masssge })
+        }
+        console.log(11)
+        let db = JSON.parse(data)
+        res.status(200).json(db)
+    })
+})
 
-
-// 子线程
-// const child1 = require("./child_process/child_process_1")
-// child1.child1()
-
-// 本地自测API 
-server.get('/', User.selecttpadmim)
-server.get('/updateuser/:id/', User.updateuser)
-server.post('/insertuser', User.insertuser)
-server.get('/text', User.text11)
-server.post('/uploadimg', multer().single('img'), Upload.uploadimg)
-
-// 微信API
-server.post('/wxlogin', WxAPI.wxlogin)
-
-// 第三方API
-server.post("/Sendmailbox", Thirdparty.Sendmailbox)
-
-// jwt登录
-server.post('/jwtlogin', Login.jwtlogin)
-
-
-server.listen(8080, () => {
+app.listen(8080, () => {
     console.log("启动服务8080完毕!");
-    // process.title = '测试进程 Node.js' // 进程进行命名
-    // console.log(`process.pid: `, process.pid); // process.pid: 19556  //每次都会改变
-    // console.log(`当前环境:`,process.env.NODE_ENV)
-    // console.log('winnodejs.pid:',process.ppid)  //当前进程的父亲进程 大概是计算中中的node服务
-    // console.log('获取当前进程工作目录:',process.cwd())
-    // console.log('获取当前进程运行的操作系统平台',process.platform)
 })
 
 

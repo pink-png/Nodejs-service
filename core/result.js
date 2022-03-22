@@ -5,14 +5,12 @@ module.exports.r200 = (code,data,message) => {
         message : message || ''
     }
 }
-
 module.exports.r404 = () => {
     return {
         code : 404,
         message : '没有这个API'
     }
 }
-
 module.exports.r500 = () => {
     return {
         code : 500,

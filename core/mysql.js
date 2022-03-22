@@ -125,7 +125,9 @@ module.exports.commit = (connection, cb) => {
         });
     }
 };
-//检查是否链接失败
+/**
+ * 检查是否链接失败
+ */
 this.getConnection((err, connection) => {
     if (err) throw err;
     else {

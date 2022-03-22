@@ -6,7 +6,7 @@ module.exports = {
         user: "root",
         password: "guo19981030",
         port: 3306,
-        database: 'tp_blog'
+        database: 'dailian'
     },
     tokenKey: "youker.net",
     key: "zanzan",
