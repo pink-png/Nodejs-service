@@ -1,8 +1,46 @@
 const db = require("../core/mysql");
 const RESULT = require("../core/result")
 
+// 用户登录
+exports.login = async (req, res, next) => {
+    try {
+        JSON.parse('11111')
+        res.send('login')
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+// 用户注册
+exports.register = async (req, res, next) => {
+    try {
+        res.send('register')
+    } catch (error) {
+        next(error)
+    }
+}
+
+// 获取当前登录用户
+exports.getCurentUser = async (req, res, next) => {
+    try {
+        res.send('getCurentUser')
+    } catch (error) {
+        next(error)
+    }
+}
+
+// 更新当前登录用户
+exports.updateCurentUser = async (req, res, next) => {
+    try {
+        res.send('updateCurentUser')
+    } catch (error) {
+        next(error)
+    }
+}
+
 // 添加新的用户
-module.exports.insertuser = async (req, res) => {
+exports.insertuser = async (req, res) => {
     let { username, password, nickname, phone } = req.body;
 
     //判断有无传过来
@@ -40,7 +78,7 @@ module.exports.insertuser = async (req, res) => {
 }
 
 // 更新用户
-module.exports.updateuser = async (req, res) => {
+exports.updateuser = async (req, res) => {
     const { id } = req.params;
     const updateSql = `UPDATE dl_user SET nickname = "gsq" where id = ${id}`
     const result = db.exec(updateSql);
@@ -53,7 +91,7 @@ module.exports.updateuser = async (req, res) => {
 }
 
 // 查询user表的数据
-module.exports.selectuser = async (req, res) => {
+exports.selectuser = async (req, res) => {
     console.log(req.url) //亲求地址
     console.log(req.method) //请求方法
     console.log(req.headers) // 请求头
@@ -69,7 +107,7 @@ module.exports.selectuser = async (req, res) => {
     })
 }
 
-module.exports.hhh = (req, res, next) => {
+exports.hhh = (req, res, next) => {
     try {
         // console.log(aa)
         // let aa = 1
@@ -77,8 +115,6 @@ module.exports.hhh = (req, res, next) => {
     } catch (error) {
         next(error)
     }
-
-
 }
 
 

@@ -3,7 +3,7 @@ const fs = require("fs")
 const path = require("path")
 const imgpath = require("../config/index").imgpath
 
-module.exports.uploadimg = (req, res) => {
+exports.uploadimg = async (req, res, next) => {
     // console.log('res',req)
 
     // 没有上传图片的时候files是空的
@@ -63,4 +63,21 @@ module.exports.uploadimg = (req, res) => {
         }
 
     }
+}
+
+exports.readjson = async (req, res, next) => {
+    try {
+        fs.readFile('./public/data/list.json', 'utf8', (err, data) => {
+            if (err) {
+                return res.status(500).json({ error: err.masssge })
+            }
+            console.log(11)
+            let db = JSON.parse(data)
+            res.status(200).json(db)
+        })
+    } catch (error) {
+        next(error)
+    }
+
+
 }
