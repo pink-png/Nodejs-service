@@ -1,5 +1,5 @@
-const db = require("../core/mysql");
-const RESULT = require("../core/result")
+const db = require("../utils/mysql");
+const RESULT = require("../utils/result")
 // console.log(module)
 
 // 发送邮箱   授权码 xtytmghcbsrjbadg

@@ -1,17 +1,21 @@
 const mysql = require('mysql');
 
-const pool = mysql.createPool(require("../config").dev);
+// 创建数据库连接池
+const pool = mysql.createPool(require("../config/config.default").dev);
+
+// 连接池里面创建了一个新连接时，会触发一个连接事件。如需要在使用此连接之前设置会话变量，将要对此事件进行监听
 pool.on('connection', (connection) => {
-    //logger.info("connection!");
+    // connection.query('SET SESSION auto_increment_increment=1')
 });
 
+// 队列中等待可用连接的回调函数被触发时，连接池将触发此事件。
 pool.on('enqueue', () => {
-    //logger.info('Waiting for available connection slot');
+    console.log('Waiting for available connection slot');
 });
 
-module.exports.Pool = pool;
+exports.Pool = pool;
 
-module.exports.getConnection = (cb) => {
+exports.getConnection = (cb) => {
     if (typeof cb == "function") {
         pool.getConnection(function (err, connection) {
             cb(err, connection);
@@ -28,7 +32,7 @@ module.exports.getConnection = (cb) => {
         });
     }
 };
-module.exports.exec = (sql, values, cb) => {
+exports.exec = (sql, values, cb) => {
     if (typeof cb == "function") {
         pool.getConnection((err, connection) => {
             if (err) {
@@ -60,7 +64,7 @@ module.exports.exec = (sql, values, cb) => {
         });
     }
 };
-module.exports.beginTransaction = (connection, cb) => {
+exports.beginTransaction = (connection, cb) => {
     if (typeof cb == "function") {
         connection.beginTransaction(function (err) {
             if (err) {
@@ -80,7 +84,7 @@ module.exports.beginTransaction = (connection, cb) => {
         });
     }
 };
-module.exports.rollback = (connection, cb) => {
+exports.rollback = (connection, cb) => {
     if (typeof cb == "function") {
         connection.rollback(function () {
             connection.release();
@@ -99,7 +103,7 @@ module.exports.rollback = (connection, cb) => {
         });
     }
 };
-module.exports.commit = (connection, cb) => {
+exports.commit = (connection, cb) => {
     if (typeof cb == "function") {
         connection.commit(function (err) {
             if (err) {
@@ -128,13 +132,13 @@ module.exports.commit = (connection, cb) => {
 /**
  * 检查是否链接失败
  */
-this.getConnection((err, connection) => {
-    if (err) throw err;
-    else {
-        // logger.info("connected success!");
-        connection.release();
-    }
-});
+// this.getConnection((err, connection) => {
+//     if (err) throw err;
+//     else {
+//         // logger.info("connected success!");
+//         connection.release();
+//     }
+// });
 
 /**
  * 带事务
@@ -142,7 +146,7 @@ this.getConnection((err, connection) => {
  * @param values
  * @returns {Promise}
  */
-module.exports.exec2 = (connection, sql, values, cb) => {
+exports.exec2 = (connection, sql, values, cb) => {
     if (typeof cb == "function") {
         connection.query(sql, values, (error, rows) => {
             cb(error, rows);

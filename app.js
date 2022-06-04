@@ -24,23 +24,24 @@ app.use(express.static(__dirname));
 // 用于请求开放目录下的image
 app.use('/public', express.static(path.join(__dirname, './public/images')))
 // 打印日志
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
-// app.use(morgan('dev'))
+// app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
+app.use(morgan('dev'))
 
 //添加路由模块到应用上
 app.use('/users', require('./router/users'));
 app.use('/order', require('./router/order'));
 
-// 通常会在所有的路由之后配置 404 的处理
-app.use((req, res, next) => {
-    res.status(404).send('404 Not Found.')
-})
-
 // 在所有中间件之后挂载错误处理中间件
 app.use(errorHandler())
 
-app.listen(PORT, () => {
-    console.log(`Service start at ${PORT}`);
+// 通常会在所有的路由之后配置 404 的处理
+app.use((req, res, next) => {
+  res.status(404).send('404 Not Found.')
 })
+
+app.listen(PORT, () => {
+  console.log(`Service start at ${PORT}`);
+})
+
 
 

@@ -1,14 +1,17 @@
 const express = require("express");
 const usersRouter = express.Router();
 const User = require("../controller/user")
+const anth = require("../middleware/AuthJwt").auth
+
 
 // 用户登录
-usersRouter.get('/login', User.login)
+usersRouter.post('/login', User.login)
 // 用户注册
-usersRouter.get('/register', User.register)
-// 获取当前登录用户
-usersRouter.get('/getCurentUser', User.getCurentUser)
-// 更新当前登录用户
-usersRouter.get('/updateCurentUser', User.updateCurentUser)
+usersRouter.post('/register', User.register)
+// 验证登录
+usersRouter.get('/profile', User.profile)
+// 列表返回
+usersRouter.get('/swiperlist', anth, User.swiperlist)
+
 
 module.exports = usersRouter;

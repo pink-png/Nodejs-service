@@ -1,17 +1,18 @@
-const JWT = require('../utils/jwt')
-const RESULT = require("../core/result")
-module.exports = async (req, res, next) => {
+const Usermodel = require("../models/user")
+const SECRET = require('../config/config.default').SECRET
+const jwt = require('jsonwebtoken')
+const RESULT = require("../utils/result")
 
-    console.log("中间件拿到数据", req.headers)
-    let { authorization = '' } = req.headers
-    const token = authorization.replace('Bearer ', '');
-    const info = JWT.verify(token);
-    console.log('info', info)
-
-    if (info) {
-        res.send(RESULT.r200(200, 'success', 'success'))
-    } else {
-        res.send(RESULT.r500())
+exports.auth = async (req, res, next) => {
+    try {
+        // 在头部拿到加密的token
+        const raw = req.headers.authorization.split(' ').pop().toString()
+        // 解密
+        const { id } = jwt.verify(raw, SECRET)
+        // 根据解密出来的id查找用户
+        const infoid = await Usermodel.findone(id)
+    } catch (error) {
+        RESULT.Res(res)('', 401, 'token失效,请重新登录')
     }
-    await next()
+
 }
