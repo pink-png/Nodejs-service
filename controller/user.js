@@ -3,6 +3,23 @@ const RESULT = require("../utils/result")
 const Usermodel = require("../models/user")
 const SECRET = require('../config/config.default').SECRET
 const jwt = require('jsonwebtoken')
+const fs = require('fs')
+
+exports.imgaaa = async (req, res, next) => {
+    try {
+        let path = `public/images/1.jpg`
+        const data = fs.readFile(path, function (err, data) {
+            if (err) {
+                RESULT.Res(res)('', 500, '读取错误')
+            } else {
+                RESULT.Res(res)(data, 200, '成功')
+            }
+        })
+        
+    } catch (error) {
+        // next(error)
+    }
+}
 
 // 用户登录
 exports.login = async (req, res, next) => {

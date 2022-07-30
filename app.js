@@ -30,6 +30,7 @@ app.use(morgan('dev'))
 //添加路由模块到应用上
 app.use('/users', require('./router/users'));
 app.use('/order', require('./router/order'));
+app.use('/io', require('./router/io'));
 
 // 在所有中间件之后挂载错误处理中间件
 app.use(errorHandler())
